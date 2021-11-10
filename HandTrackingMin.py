@@ -7,6 +7,9 @@ cap = cv2.VideoCapture(0)
 mpHand = mp.solutions.hands #to get a hand model from mp
 hands = mpHand.Hands() #check parameters and video on 6:50
 mpDraw = mp.solutions.drawing_utils
+
+previousTime = 0
+currentTime = 0
 while True:
     success, img = cap.read()
 
@@ -18,9 +21,26 @@ while True:
     #now extract result from hands if hands is not None
     if results.multi_hand_landmarks:
         for singleHand in results.multi_hand_landmarks:
+            #get id and landmarks(x y coordinates)
+            for id, lm in enumerate(singleHand.landmark):
+                #print(id, lm) if we print this well get landmark id and x,y coordinates 20 x:0.93294 y:0.34723894 and so on other landmarks
+                # x and y coordinates will help us find location of the landmark on the hand
+                #to get pixel value multiply with width and height
+                height, width, chanel = img.shape
+                pixelX, pixelY = int(lm.x * width), int(lm.y * height)
+                # print(id, pixelX, pixelY)
+                if(id == 0):
+                    cv2.circle(img, (pixelX, pixelY), 20, (255,0,255), cv2.FILLED)
+
             #mediapipe provided us with function that will draw landmarks
             #otherwise there will be a lot of math for drawinf dots and connecting
             mpDraw.draw_landmarks(img, singleHand, mpHand.HAND_CONNECTIONS)
 
+    currentTime = time.time()
+    # This frequency is usually measured by frames per second (fps). For example, at 30 fps, 30 distinct images would appear in succession within one second
+    fps = 1 / (currentTime - previousTime)
+    previousTime = currentTime
+
+    cv2.putText(img, str(int(fps)), (10, 70), cv2.FONT_ITALIC, 3, (255, 0, 255), 3)
     cv2.imshow("Image", img)
     cv2.waitKey(1)
