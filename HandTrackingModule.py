@@ -19,16 +19,15 @@ class handDetector():
         self.mpDraw = mp.solutions.drawing_utils
 
     def findHand(self, img):
-        # //to detect hand
-        # send rgb image to object hands
+        # THIS METHOD WILL DETECT HAND
+        # Object Hands can accept only rgb image
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        self.results = self.hands.process(imgRGB)  # will process frame for us and give result
-        # print(results.multi_hand_landmarks)
-        # now extract result from hands if hands is not None
+        self.results = self.hands.process(imgRGB)  # process as detect
+        # If hands is not None, then for every detected hand draw landmarks and connections
         if self.results.multi_hand_landmarks:
             for singleHand in self.results.multi_hand_landmarks:
                 # mediapipe provided us with function that will draw landmarks
-                # otherwise there will be a lot of math for drawinf dots and connecting
+                # otherwise there will be a lot of math for drawing dots and connections
                 self.mpDraw.draw_landmarks(img, singleHand, self.mpHand.HAND_CONNECTIONS)
         return img
 
@@ -39,16 +38,16 @@ class handDetector():
             singleHand = self.results.multi_hand_landmarks[handNo]
             # get id and landmarks(x y coordinates)
             for id, lm in enumerate(singleHand.landmark):
-                # print(id, lm) if we print this well get landmark id and x,y coordinates 20 x:0.93294 y:0.34723894 and so on other landmarks
+                # x,y coordinates are reprecented as decimal x:0.93294 y:0.34723894
                 # x and y coordinates will help us find location of the landmark on the hand
                 # to get pixel value multiply with width and height
                 height, width, chanel = img.shape
                 pixelX, pixelY = int(lm.x * width), int(lm.y * height)
-                # print(id, pixelX, pixelY)
                 lmList.append([id, pixelX, pixelY])
                 if draw:
                     cv2.circle(img, (pixelX, pixelY), 20, (255, 0, 255), cv2.FILLED)
         return lmList
+
 def main():
     cap = cv2.VideoCapture(0)
 
