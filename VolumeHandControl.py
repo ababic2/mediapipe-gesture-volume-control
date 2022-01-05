@@ -1,29 +1,8 @@
 import cv2
 import numpy as np
-import time
-
 import pygame
-
 import HandTrackingModule as htm
 import math  # for hypoteuns function
-import pycaw
-
-from pydub import AudioSegment
-from pydub.playback import play
-
-import playsound
-import multiprocessing
-
-from pygame import mixer
-
-import threading
-
-
-def thread_function():
-    sound = AudioSegment.from_file("flaunt.mp3")
-    play(sound)
-    time.sleep(2)
-
 
 wCam, hCam = 1280, 720
 cap = cv2.VideoCapture(0)
@@ -59,28 +38,20 @@ while True:
         # finding distance between two landmarks
         # distance bewteen 2 coordinates is d= sqrt((x2-x1)^2 + (y2-y1)^2)
         distance = math.hypot((x2 - x1), (y2 - y1))
-        # print(distance)
-        # pygame.mixer.pre_init(frequency=44100, size=-16, channels=1, buffer=512)
-
-        # channel = pygame.mixer.find_channel(True)
-        # channel.set_volume(1.0)
+        # Convert distance value
+        # Hand range was [30, 300]
+        # [0, 1] is the range to which we want to convert it
         vol = np.interp(distance, [30, 300], [0, 1])
         volBar = np.interp(distance, [30, 300], [400, 150])
         volPer = np.interp(distance, [30, 300], [0, 100])
-        print(vol)
         sound1.set_volume(vol)
 
         if distance < 30:
             # button effect
             cv2.circle(img, (centerLineX, centerLineY), 10, (255, 0, 0), cv2.FILLED)
-            # playsound.playsound('flaunt.mp3', False)
-            # sound1.set_volume(0)
-            # pygame.mixer.music.load("flaunt.ogg")
-            # pygame.mixer.music.play()
-            # pygame.mixer.music.get_volume().
     cv2.rectangle(img, (50, 150), (85, 400), (0,255,0), 3)
     cv2.rectangle(img, (50, int(volBar)), (85, 400), (0, 255, 0), cv2.FILLED)
     cv2.putText(img, f'{int(volPer)}%', (40,450), cv2.FONT_HERSHEY_COMPLEX,1 ,(0,255,0), 3)
-    #
+
     cv2.imshow('MediaPipe Hands', img)
     cv2.waitKey(1)

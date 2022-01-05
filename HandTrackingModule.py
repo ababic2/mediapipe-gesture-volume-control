@@ -4,7 +4,7 @@ import mediapipe as mp
 
 
 class handDetector():
-    def __init__(self, mode=False, maxHands=2, detectionConfidence=0.5, trackConfidence=0.5):
+    def __init__(self, mode=False, maxHands=1, detectionConfidence=0.5, trackConfidence=0.5):
         # parameters of model Hands
         self.mode = mode
         self.maxHands = maxHands
@@ -13,9 +13,9 @@ class handDetector():
         # To get hand model from mediapipe
         self.mpHand = mp.solutions.hands
         # To set parameters
-        # NOT THE SAME OKO 27MIN
         self.hands = self.mpHand.Hands()
-        # To draw connections between landmarks
+        #  To draw connections between landmarks
+        #  Initializing the drawing utils for drawing the landmarks on image
         self.mpDraw = mp.solutions.drawing_utils
 
     def findHand(self, img):
@@ -34,6 +34,7 @@ class handDetector():
 
     def findPosition(self, img, handNo = 0, draw = False):
         lmList = []
+
         if self.results.multi_hand_landmarks:
             singleHand = self.results.multi_hand_landmarks[handNo]
             # get id and landmarks(x y coordinates)
