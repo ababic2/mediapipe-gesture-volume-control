@@ -13,7 +13,7 @@ detector = htm.handDetector(detectionConfidence=0.7)
 
 pygame.mixer.pre_init(frequency=44100, size=-16, channels=1, buffer=512)
 pygame.mixer.init()
-sound1 = pygame.mixer.Sound("flaunt.ogg")
+sound1 = pygame.mixer.Sound("thriller.ogg")
 minVol = 0
 maxVol = 1
 
